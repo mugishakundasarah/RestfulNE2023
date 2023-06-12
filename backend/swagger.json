@@ -1,0 +1,220 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "PROJECT NAME APIs",
+      "version": "1.0.0",
+      "description": "API documentation for Your App"
+    },
+    "tags": [
+      {
+        "name": "authentication-controller",
+        "description": "Operations related to authentication"
+      },
+      {
+        "name": "user-controller",
+        "description": "Operations related to users"
+      }  
+    ],
+    "servers": [
+      {
+        "url": "http://localhost:3000"
+      }
+    ],
+    "paths": {
+      "/auth/signup": {
+        "post": {
+          "summary": "Save user",
+          "tags": ["authentication-controller"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "User saved successfully",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      },
+      "/auth/signin": {
+        "post": {
+          "summary": "Signin",
+          "tags": ["authentication-controller"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "required": true
+                    },
+                    "password": {
+                      "email" : {
+                        "type" : {
+                          "type" : "string",
+                          "required" : true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "User signin successful",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      },
+  
+      "/api/{id}/uploadFiles": {
+        "post": {
+          "summary": "Upload images of the user",
+          "tags": [
+            "user-controller"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID to save the item",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "images" : {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "string",
+                        "format" : "binary"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Menu item created successfully",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      },
+      "/api/{id}/uploadFile" : {
+        "post": {
+          "summary": "Upload image of item",
+          "tags": [
+            "user-controller"
+          ],
+          "consumes" : ["multipart/form-data"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the item",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "image" : {
+                        "type" : "string",
+                        "format" : "binary"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Menu item picture uploaded successfully",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "phoneNumber": {
+              "type": "string",
+              "required": true
+            },
+            "fullName": {
+              "type": "string",
+              "required": true
+            },
+            "email": {
+              "type": "string",
+              "required": true
+            },
+            "password": {
+              "type": "string",
+              "required": true
+            },
+            "role": {
+              "type": "string",
+              "required": true,
+              "enum": ["RESTAURANT_MANAGER", "CLIENT"]
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }, 
+    "security" : [
+      {
+        "bearerAuth" : []
+      }
+    ]
+  }
+  
