@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+:root{
+    --primary: #1D5FAD;
+    --secondary: #9A9A9A;
+    --light-primary: #F1F5FA;
+}
+
+.bg-primary{
+    background-color: var(--primary);
+}
+
+.bg-secondary{
+    background-color: var(--secondary);
+}
+
+.bg-primary-light{
+    background-color: var(--light-primary);
+}
+
+
+.text-secondary{
+    color: var(--secondary);
+}
+
+.text-primary{
+    color: var(--primary);
+}
