@@ -1,17 +1,14 @@
-import jwtDecode from "jwt-decode"
-
 const Header = () => {
-    let userData = jwtDecode(localStorage.getItem('token'))
+    const logout = () => {
+        localStorage.removeItem("token")
+        window.location.href = "/login"
+    }
     return (
-        <div className="flex flex-wrap shadow-md justify-between py-4 px-5"> 
+        <div className="flex flex-wrap shadow-md justify-between py-1 px-5"> 
             <div className="flex flex-col lg:flex-row items-center">
-                <img src="Logo.svg" alt="Logo"/>
-                <p className="whitespace-nowrap ml-4">
-                    <span className="text-primary font-bold">System admin</span>
-                    <span className="text-secondary font-bold">/{userData?.name}</span>
-                </p>
+                <img src="rtb.svg" alt="Logo"/>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center cursor-pointer" onClick={logout}>
                 <p className="text-secondary mr-2">Logout </p>
                 <img src="Logout.svg" alt="Logout"/>
             </div>

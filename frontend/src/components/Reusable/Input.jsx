@@ -14,7 +14,7 @@ const Input = ({
 }) => {
     return (
         <div className="w-full">
-            <label htmlFor={name} id={`${name}Label`} className="block">
+            <label htmlFor={name} id={`${name}Label`} className="block text-secondary">
 				{labelName}
 			</label>
             <input

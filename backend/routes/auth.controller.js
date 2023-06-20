@@ -4,33 +4,34 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/User');
-const { UserValidationSchema, LoginValidationSchema } = require('../utils/Validation');
+const { authValidationSchema } = require('../utils/Validation');
 
 // Sign up route
 router.post('/signup', async (req, res) => {
   try {
-    let {error, value} = UserValidationSchema.validate(req.body)
+    let {error, value} = authValidationSchema.validate(req.body)
 
     if(error) {
       return res.json({message: error.details[0].message, status: 404})
     }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({email: value.email});
+    let email = value.email 
+    console.log(email)
+    // Check if the username already exists
+    const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.json({ message: 'You have already registered' });
+      return res.status(409).json({ message: 'Username already exists' });
     }
 
     // Create a new user
     const hashedPassword = await bcrypt.hash(value.password, 10);
 
-    const newUser = new User({ ...value, password: hashedPassword });
-    await newUser.save();
+    const newUser = await User.create({ email, password: hashedPassword });
 
-    res.status(201).json({ message: 'User created successfully' , status: 200});
+    return res.status(201).json({ message: 'User created successfully', user: newUser , status: 200});
   } catch (error) {
     console.error('Error signing up:', error);
-    res.status(500).json({ message: 'Internal server error'});
+    return res.status(500).json({ message: 'Internal server error'});
   }
 });
 
@@ -47,14 +48,16 @@ router.get('/users',async (req, res) => {
 // Sign in route
 router.post('/signin', async (req, res) => {
   try {
-    let {error,value} = LoginValidationSchema.validate(req.body)
+    let {error,value} = authValidationSchema.validate(req.body)
 
     if(error) {
       return res.json({message: error.details[0].message, status: 404})
     }
 
+
+    let email = value.email
     // Check if user exists
-    const user = await User.findOne({ email: value.email });
+    const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.json({ message: 'Invalid username or password' , status: 401});
     }
@@ -65,17 +68,15 @@ router.post('/signin', async (req, res) => {
       return res.json({ message: 'Invalid username or password', status: 401});
     }
 
+
     // Generate and sign a JWT token
-    const token = jwt.sign({ user_id: user._id, role: user.role } , process.env.JWT_SECRET_KEY, { expiresIn: '1h'});
+    const token = jwt.sign({ user_id: user.dataValues.id } , process.env.JWT_SECRET_KEY, { expiresIn: '2d'});
 
     let LoggedInUser = {
       email: user.email,
-      fullName: user.fullName,
-      phoneNumber: user.phoneNumber,
-      role: user.role 
     }
 
-    return res.status(201).json({ token, user: LoggedInUser });
+    return res.status(200).json({ token, user: LoggedInUser, status: 200 });
   } catch (error) {
     console.error('Error signing in:', error);
     res.status(500).json({ message: 'Internal server error' });

@@ -1,10 +1,16 @@
-const mongoose = require('mongoose');
+const { Sequelize } = require("sequelize")
 
-const DB = "supa-menu"
-const mongoURL = `mongodb://localhost:27017/${DB}`; // Replace with your MongoDB connection URL
+const sequelize = new Sequelize('employeems', 'mugisha', 'root@123', {dialect: 'postgres'})
 
-function connectToDB() {
-  return mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
-}
+const testDbConnection = async () => {
+  try {
+    await sequelize.authenticate();
+    await sequelize.sync();
+    console.log("Connection to postgres has been established successfully.");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  }
+};
 
-module.exports = connectToDB;
+
+module.exports = { sq: sequelize, testDbConnection };

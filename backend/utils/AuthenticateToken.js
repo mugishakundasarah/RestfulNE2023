@@ -16,19 +16,3 @@ module.exports.authenticate = async function AuthenticateToken (req, res, next) 
       return res.status(401).json({ message: 'Invalid token' , data: error});
     }
 }
-
-module.exports.verifyRestaurantManager = function(req, res, next){
-     // Check if the decoded token contains the necessary user information or permissions
-     if (req.user.role !== 'RESTAURANT_MANAGER') {
-        return res.status(403).json({ message: 'Unauthorized access' });
-      }
-      next()
-}
-
-module.exports.verifyClient = function (req, res, next){
-    // Check if the decoded token contains the necessary user information or permissions
-    if (req.user.role !== 'CLIENT') {
-        return res.status(403).json({ message: 'Unauthorized access' });
-    }
-    next()
-}

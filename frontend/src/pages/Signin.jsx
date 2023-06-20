@@ -1,45 +1,47 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import Input from "../components/Reusable/Input";
 import Button from "../components/Reusable/Button";
-import { Link, useNavigate } from "react-router-dom";
-import { validEmailRegex } from "../utils/validEmailRegex";
+import {  useNavigate } from "react-router-dom";
+import { validEmailRegex } from '../utils/validEmailRegex'
 import axios from "axios";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../utils/BaseUrl";
 
-const Signin = () => {
-    const [loginData, setLoginData] = useState({
+const Signup = () => {
+    const [registrationData, setRegistrationData] = useState({
         email: "",
         password: ""
     })
-    const navigate = useNavigate()
-    const [errors, setErrors] = useState({email: "", password: ""})
-    const [loading, setLoading] = useState(false)
 
+    const [errors, setErrors] = useState({
+        email: "",
+        password: ""
+    })
+    
+    const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
     const inputHandler = (e) => {
+        e.preventDefault()
         var name = e.target.name;
         var value = e.target.value;
-        setLoginData({ ...loginData, [name]: value })
-        e.preventDefault()
+        setRegistrationData({ ...registrationData, [name]: value })
         switch (name) {
-          case "email":
-            errors.email = validEmailRegex.test(value) ? '' : "Email is not valid"
-            break;
+            case "email":
+              errors.email = validEmailRegex.test(value) ? '' : "Email is not valid"
+                break;
           default:
             break;
         }
         setErrors({ ...errors })
     };
 
-    const handleSubmit = async(e) => {
+    const handleSubmit = async() => {
         try {
-            e.preventDefault()
             setLoading(true)
-            let submitData = await axios.post(`${BASE_URL}/auth/signin`, loginData);
-            if(submitData.status == 201){
+            let submitData = await axios.post(`${BASE_URL}/auth/signin`, registrationData);
+            if(submitData.data.status == 200){
                 toast.success(submitData.data.message);
-                let token = submitData.data.token
-                localStorage.setItem('token', token)
+                localStorage.setItem('token', submitData.data.token)
                 setLoading(false)
                 navigate('/dashboard')
             }else{
@@ -51,18 +53,13 @@ const Signin = () => {
             setLoading(false)
         }
     }
-
     return (
-        <div className="w-[100%]  flex justify-between">
-            <div className="w-[100%] md:w-[60%] mx-auto items-center flex flex-col justify-around">
-              <div className="w-[100%] xl:w-[50%] p-10 flex flex-col justify-around">    
-                <img src="Logo.svg" alt="Logo" className="w-60"/>
+        <div className="w-[100%] h-full flex bg-primary items-center">
+            <div className="w-[80%] md:w-[60%] xl:w-[30%] mx-auto items-center flex flex-col justify-around bg-white h-[40rem]">
+              <div className=" p-10 flex flex-col justify-around w-full">    
+                <img src="rtb.svg" alt="Logo" className="w-60 mx-auto"/>  
                 <div className="mt-12">
-                    <h1 className="text-3xl">Welcome back!</h1>
-                    <p className=" text-md">Enter your credentials back to access your account</p>
-                </div>
-                <div className="w-[100%] mt-12">
-                    <div>
+                    <div className="mt-6 ">
                         <Input 
                             name={"email"} 
                             type={"email"}
@@ -70,9 +67,9 @@ const Signin = () => {
                             labelName={"Email address"}
                             inputHandler={inputHandler}
                             required={true}
-                            defaultInputValue={loginData.email}
+                            defaultInputValue={registrationData.email}
                             disabled={loading}
-                            value={loginData.email}
+                            value={registrationData.email}
                             error={errors.email}
                         />
                     </div>
@@ -84,9 +81,9 @@ const Signin = () => {
                             labelName={"Password"}
                             inputHandler={inputHandler}
                             required={true}
-                            defaultInputValue={loginData.password}
+                            defaultInputValue={registrationData.password}
                             disabled={loading}
-                            value={loginData.password}
+                            value={registrationData.password}
                             error={errors.password}
                         />
                     </div>
@@ -95,7 +92,7 @@ const Signin = () => {
                         <p className="text-primary">forgot password?</p>
                     </div>
 
-                    <div className="mt-12">
+                    <div className="mt-10">
                         <Button
                             className="bg-primary"
                             name={"Login"}
@@ -104,19 +101,10 @@ const Signin = () => {
                         />
                     </div>
                 </div>
-                <div className="flex mt-8 mx-auto">
-                    <p>Already have an account?</p>
-                    <Link to={"/signup"} className="ml-2 text-primary">Register</Link>
-                </div>
               </div>
-            </div>
-            <div className="hidden xl:block  xl:w-[50%] self-end flex">
-                <img src="people-3.png" alt="A people svg" className="w-[60em] h-[60em]"/>
-            </div>
-            <div>
             </div>
         </div>
     )
 }
 
-export default Signin
+export default Signup

@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.0",
     "info": {
-      "title": "PROJECT NAME APIs",
+      "title": "EmployeeMS APIs",
       "version": "1.0.0",
       "description": "API documentation for Your App"
     },
@@ -9,15 +9,11 @@
       {
         "name": "authentication-controller",
         "description": "Operations related to authentication"
-      },
-      {
-        "name": "user-controller",
-        "description": "Operations related to users"
-      }  
+      }
     ],
     "servers": [
       {
-        "url": "http://localhost:3000"
+        "url": "http://localhost:3100"
       }
     ],
     "paths": {
@@ -83,92 +79,77 @@
           }
         }
       },
-  
-      "/api/{id}/uploadFiles": {
+      "/employees": {
         "post": {
-          "summary": "Upload images of the user",
-          "tags": [
-            "user-controller"
-          ],
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "description": "ID to save the item",
-              "required": true,
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
+          "tags": ["Employees"],
+          "summary": "Create a new employee",
+          "description": "Create a new employee with the provided details",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "parameters": [],
           "requestBody": {
             "required": true,
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "images" : {
-                      "type" : "array",
-                      "items" : {
-                        "type" : "string",
-                        "format" : "binary"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/Employee"
                 }
               }
             }
           },
           "responses": {
-            "200": {
-              "description": "Menu item created successfully",
-              "content": {
-                "application/json": {}
-              }
+            "201": {
+              "description": "Employee created successfully"
+            },
+            "400": {
+              "description": "Invalid request data"
+            },
+            "500": {
+              "description": "Internal server error"
             }
           }
-        }
-      },
-      "/api/{id}/uploadFile" : {
-        "post": {
-          "summary": "Upload image of item",
-          "tags": [
-            "user-controller"
-          ],
-          "consumes" : ["multipart/form-data"],
+        },
+        "get": {
+          "tags": ["Employees"],
+          "summary": "Get paginated employees",
+          "description": "Retrieve employees in a paginated manner",
           "parameters": [
             {
-              "name": "id",
-              "in": "path",
-              "description": "ID of the item",
-              "required": true,
+              "name": "page",
+              "in": "query",
+              "description": "Page number",
+              "required": false,
               "schema": {
-                "type": "string"
+                "type": "integer"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "description": "Number of employees per page",
+              "required": false,
+              "schema": {
+                "type": "integer"
               }
             }
           ],
-          "requestBody": {
-            "content": {
-              "multipart/form-data": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "image" : {
-                        "type" : "string",
-                        "format" : "binary"
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "employees": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Employee"
                     }
                   }
                 }
               }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "Menu item picture uploaded successfully",
-              "content": {
-                "application/json": {}
-              }
+            },
+            "500": {
+              "description": "Internal server error"
             }
           }
         }
@@ -201,6 +182,56 @@
               "enum": ["RESTAURANT_MANAGER", "CLIENT"]
             }
           }
+        },
+        "Employee": {
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            },
+            "nationalId": {
+              "type": "string",
+              "maxLength": 16
+            },
+            "telephone": {
+              "type": "string",
+              "maxLength": 10
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "department": {
+              "type": "string"
+            },
+            "position": {
+              "type": "string"
+            },
+            "laptopManufacturer": {
+              "type": "string"
+            },
+            "laptopModel": {
+              "type": "string"
+            },
+            "serialNumber": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "firstName",
+            "lastName",
+            "nationalId",
+            "telephone",
+            "email",
+            "department",
+            "position",
+            "laptopManufacturer",
+            "laptopModel",
+            "serialNumber"
+          ]
         }
       },
       "securitySchemes": {

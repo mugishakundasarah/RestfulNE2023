@@ -1,25 +1,15 @@
 const cors = require('cors')
-const express = require('express')
 const app = require("express")();
 const dotenv = require("dotenv")
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-
+const express = require("express")
 const documentation = require('../swagger.json')
 const routes = require("../routes/index")
-const connectToDB = require("../models/db"); 
+const { testDbConnection } = require("../models/db.js")
 
 const loadDb = () => {
-    connectToDB()
-  .then(() => {
-    console.log('Connected to MongoDB');
-    app.listen(3000, () => {
-      console.log('Server is running on port 3000');
-    });
-  })
-  .catch((error) => {
-    console.error('Error connecting to MongoDB:', error);
-  });
+  testDbConnection()  
 }
 
 const loadDocumentation= () => {
@@ -33,7 +23,7 @@ const loadDocumentation= () => {
           },
           servers: [
             {
-              url: 'http://localhost:3000'
+              url: 'http://localhost:3100'
             }
           ]
         },
@@ -44,15 +34,16 @@ const loadDocumentation= () => {
       app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(documentation));    
 }
 
+const APP_PORT = 3100;
 
 module.exports = function loadApp(){
+  app.listen(APP_PORT, () => {
+    console.log(`Server is running on port  ${APP_PORT}`);
+  });
     dotenv.config()
     loadDb()
     loadDocumentation()
-    app.use(cors({
-        origin: 'http://localhost:3000', 
-        preflightContinue: false     
-    }));
+    app.use(cors());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use("/", routes)

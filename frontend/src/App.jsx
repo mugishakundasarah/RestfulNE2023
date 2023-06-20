@@ -5,9 +5,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import jwtDecode from 'jwt-decode'
 
 import './App.css'
-import Dashboard from './pages/Dashboard'
 import Signin from './pages/Signin'
-import Signup from './pages/Signup'
+import Dashboard from './pages/Dashboard'
 
 function App() {
   function PrivateRoutes() {
@@ -42,7 +41,6 @@ function App() {
           </Route>
           <Route element={<PublicRoutes/>}>
             <Route path='/login' element={<Signin/>}/>
-            <Route path='/register' element={<Signup/>}/>
             <Route path='/' element={<Signin/>}/>
           </Route>
         </Routes>
